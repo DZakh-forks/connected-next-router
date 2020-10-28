@@ -7,6 +7,6 @@ export declare const routerReducer: import("redux").Reducer<import("./types").Ro
 export declare const ConnectedRouter: import("react").FC<{
     children?: import("react").ReactNode;
     reducerKey?: string | undefined;
-    ignoreInitial?: boolean | undefined;
+    isClientSideAutoInitial?: boolean | undefined;
     Router?: import("next/router").SingletonRouter | undefined;
 }>;
