@@ -14,10 +14,11 @@ var createConnectedRouter = function (structure) {
         var isTimeTravelEnabled = useRef(false);
         var inTimeTravelling = useRef(false);
         function trackRouteComplete() {
-            isTimeTravelEnabled.current = --ongoingRouteChanges.current <= 0;
+            ongoingRouteChanges.current = Math.max(ongoingRouteChanges.current - 1, 0);
+            isTimeTravelEnabled.current = ongoingRouteChanges.current === 0;
         }
         function trackRouteStart() {
-            isTimeTravelEnabled.current = ++ongoingRouteChanges.current <= 0;
+            isTimeTravelEnabled.current = ++ongoingRouteChanges.current === 0;
         }
         useEffect(function () {
             if (!clientSideAutosync) {
