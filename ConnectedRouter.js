@@ -32,7 +32,7 @@ var createConnectedRouter = function (structure) {
     var getIn = structure.getIn;
     var ConnectedRouter = function (props) {
         var Router = props.Router || router_1.default;
-        var _a = props.reducerKey, reducerKey = _a === void 0 ? 'router' : _a, _b = props.isClientSideAutoInitial, isClientSideAutoInitial = _b === void 0 ? false : _b;
+        var _a = props.reducerKey, reducerKey = _a === void 0 ? 'router' : _a, _b = props.clientSideAutosync, clientSideAutosync = _b === void 0 ? false : _b;
         var store = react_redux_1.useStore();
         var ongoingRouteChanges = react_1.useRef(0);
         var isTimeTravelEnabled = react_1.useRef(false);
@@ -44,15 +44,21 @@ var createConnectedRouter = function (structure) {
             isTimeTravelEnabled.current = ++ongoingRouteChanges.current <= 0;
         }
         react_1.useEffect(function () {
-            if (!isClientSideAutoInitial) {
+            if (!clientSideAutosync) {
                 return;
             }
             if (typeof window === 'undefined') {
                 return;
             }
             Router.ready(function () {
-                var pathname = window.location.pathname;
-                store.dispatch(actions_1.onLocationChanged(locationFromUrl_1.default(pathname), 'REPLACE'));
+                var router = Router.router;
+                if (!router) {
+                    return;
+                }
+                var pathname = router.pathname || '';
+                var location = window.location;
+                var asPath = "" + location.pathname + location.search;
+                store.dispatch(actions_1.onLocationChanged(locationFromUrl_1.default(pathname, asPath), 'REPLACE'));
             });
         }, []);
         react_1.useEffect(function () {

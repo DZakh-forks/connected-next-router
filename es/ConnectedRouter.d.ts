@@ -4,7 +4,7 @@ import { Structure } from './types';
 declare type ConnectedRouterProps = {
     children?: React.ReactNode;
     reducerKey?: string;
-    isClientSideAutoInitial?: boolean;
+    clientSideAutosync?: boolean;
     Router?: SingletonRouter;
 };
 declare const createConnectedRouter: (structure: Structure) => React.FC<ConnectedRouterProps>;

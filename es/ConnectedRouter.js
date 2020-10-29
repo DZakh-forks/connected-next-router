@@ -8,7 +8,7 @@ var createConnectedRouter = function (structure) {
     var getIn = structure.getIn;
     var ConnectedRouter = function (props) {
         var Router = props.Router || NextRouter;
-        var _a = props.reducerKey, reducerKey = _a === void 0 ? 'router' : _a, _b = props.isClientSideAutoInitial, isClientSideAutoInitial = _b === void 0 ? false : _b;
+        var _a = props.reducerKey, reducerKey = _a === void 0 ? 'router' : _a, _b = props.clientSideAutosync, clientSideAutosync = _b === void 0 ? false : _b;
         var store = useStore();
         var ongoingRouteChanges = useRef(0);
         var isTimeTravelEnabled = useRef(false);
@@ -20,15 +20,21 @@ var createConnectedRouter = function (structure) {
             isTimeTravelEnabled.current = ++ongoingRouteChanges.current <= 0;
         }
         useEffect(function () {
-            if (!isClientSideAutoInitial) {
+            if (!clientSideAutosync) {
                 return;
             }
             if (typeof window === 'undefined') {
                 return;
             }
             Router.ready(function () {
-                var pathname = window.location.pathname;
-                store.dispatch(onLocationChanged(locationFromUrl(pathname), 'REPLACE'));
+                var router = Router.router;
+                if (!router) {
+                    return;
+                }
+                var pathname = router.pathname || '';
+                var location = window.location;
+                var asPath = "" + location.pathname + location.search;
+                store.dispatch(onLocationChanged(locationFromUrl(pathname, asPath), 'REPLACE'));
             });
         }, []);
         useEffect(function () {
